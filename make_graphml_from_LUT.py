@@ -1,4 +1,6 @@
 #!/usr/global/bin/python
+#
+# - David Grayson and Lisa Karstens 2015
 
 import sys
 
