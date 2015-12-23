@@ -52,7 +52,7 @@ else
 		#rerun with Lausanne2008
 		echo -e "\n*************************\n"
 		echo -e "\nCMP custom matrix creation requires that CMP is first run with Lausanne2008 or NativeFreesurfer...\n"
-		echo -e "\nRunning: run_cmp_serial.bash $sub $config Lausanne2008 $existingFS 0 .\n"
+		echo -e "\nRunning: `basename $0` $sub $config Lausanne2008 $existingFS 0 .\n"
 		echo -e "\n*************************\n"
 		`basename $0` $sub $config Lausanne2008 $existingFS 0 .
 	fi
