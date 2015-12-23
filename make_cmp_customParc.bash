@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ $# -ne 2 ]]; then
 	echo -e "\nUsage:	`basename $0` <subjectFolder> <parcellation> \n"
-	echo -e "	i.e. `basename $0` subject1 ${parc}"
+	echo -e "	i.e. `basename $0` subject1 Gordon"
 	echo -e "You must have precomputed freesurfer outputs in the FREESURFER folder under the subjectFolder."
 	echo -e "Assumes freesurfer v5.1. Not tested with other versions (earlier or later).\n"
 	exit 1
