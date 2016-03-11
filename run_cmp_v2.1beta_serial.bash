@@ -16,11 +16,11 @@ movetrks=`readlink -m $5`
 movefinaldir=`readlink -m $6`
 
 #sanity checks
-if [ -d "$movetrks" ]; then
+if [ ! -d "$movetrks" ]; then
 	echo "ERROR: $movetrks is not an existing directory"
 	exit 1
 fi
-if [ -d "$movefinaldir" ]; then
+if [ ! -d "$movefinaldir" ]; then
 	echo "ERROR: $movefinaldir is not an existing directory"
 	exit 1	
 fi
