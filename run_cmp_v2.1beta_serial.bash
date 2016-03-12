@@ -16,11 +16,7 @@ existingFS=$4
 movetrks=`readlink -m $5`
 movefinaldir=`readlink -m $6`
 
-#sanity checks
-if [ ! -d "$movetrks" ]; then
-	echo "ERROR: $movetrks is not an existing directory"
-	exit 1
-fi
+#sanity check
 if [ ! -d "$movefinaldir" ]; then
 	echo "ERROR: $movefinaldir is not an existing directory"
 	exit 1	
