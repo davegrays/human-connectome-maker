@@ -71,7 +71,7 @@ class CustomMatSub(object):
                 self.roi_volumes = glob.glob(register.base_dir + '/' + register.name + '/dilate/*.nii.gz')
         else:
                 print 'register_volumes() method not yet defined for deterministic matrices. sorry.'
-                print 'This method should depend on whether or not ROI dilation is turned on in the config file
+                print 'This method should depend on whether or not ROI dilation is turned on in the config file'
                 print 'On the other hand, custom parcellation with deterministic tracto should work fine with the connectomemapper -David 2015'
                 sys.exit('Exited script with error.')
 
