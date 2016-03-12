@@ -25,15 +25,16 @@ fi
 #edit config file to use command arguments; check if using custom parcellation or not
 if [[ $parc == NativeFreesurfer || $parc == Lausanne2008 ]];then
 	sed "s/parcellation_scheme = .*/parcellation_scheme = ${parc}/" $config | sed "s/insert_sub_here/${sub}/g" | sed "s/use_existing_freesurfer_data = .*/use_existing_freesurfer_data = ${existingFS}/" > ${sub}.ini
+	sed -i "s|insert_PWD_here|${PWD}|g" ${sub}.ini
 else
 	sed 's/seg_tool = Freesurfer/seg_tool = Custom segmentation/' $config | sed 's/parcellation_scheme = Lausanne2008/parcellation_scheme = Custom/' | sed "s/insert_sub_here/${sub}/g" | sed "s/CustomParcHere/${parc}/g" | sed 's/custom_parcellation = False/custom_parcellation = True/' > ${sub}.ini
+	sed -i "s|insert_PWD_here|${PWD}|g" ${sub}.ini
 	graphml=`cat ${sub}.ini | grep graphml_file | awk '{print $3}'`
 	numreg=`cat ${graphml} | grep "node id" | tail -1 | sed 's/.*="//' | sed 's/">//'`
 	echo "Using $parc custom Parcellation, with $numreg GM regions."
 	sed -i "s/number_of_regions = 0/number_of_regions = ${numreg}/g" ${sub}.ini
 	sed -i "s/'number_of_regions': 0/'number_of_regions': ${numreg}/g" ${sub}.ini
 fi
-sed -i "s|insert_PWD_here|${PWD}|g" ${sub}.ini
 
 #activate cmp beta v02 (David's edition; has mrtrix and gibbs)
 source /group_shares/PSYCH/code/release/pipelines/CMP_beta_v02/bin/activate
