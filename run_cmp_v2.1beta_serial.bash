@@ -8,6 +8,7 @@ if [[ $# -ne 6 ]]; then
 	exit 1
 fi
 
+basedir=`dirname $0`
 sub=$1
 config=$2
 parc=$3
@@ -48,7 +49,7 @@ if [[ $parc == NativeFreesurfer || $parc == Lausanne2008 ]];then
 	connectomemapper $sub ${sub}.ini
 else
 	#check if CMP has been run yet
-	if [ -d ${sub}/NIPYPE/diffusion_pipeline/connectome_stage/compute_matrice ];then
+	if [ ! -d ${sub}/NIPYPE/diffusion_pipeline/connectome_stage/compute_matrice ];then
 		#rerun with Lausanne2008
 		echo -e "\n*************************\n"
 		echo -e "\nCMP custom matrix creation requires that CMP is first run with Lausanne2008 or NativeFreesurfer...\n"
@@ -59,7 +60,7 @@ else
 	#now run the custom CMP scripts
 	CMPdir=`which connectomemapper | sed 's/bin\/connectomemapper/cmp_nipype\/build\/lib/'`
 	make_cmp_customParc.bash $sub $parc
-	python2.7 cmp_v2.1beta_getMatrix.py $sub $sub.ini $parc $CMPdir
+	python2.7 ${basedir}/cmp_v2.1beta_getMatrix.py $sub $sub.ini $parc $CMPdir
 fi
 
 ##########################################
