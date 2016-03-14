@@ -23,19 +23,23 @@ if [ ! -d "$movefinaldir" ]; then
 	exit 1	
 fi
 
-#edit config file to use command arguments; check if using custom parcellation or not
-if [[ $parc == NativeFreesurfer || $parc == Lausanne2008 ]];then
-	sed "s/parcellation_scheme = .*/parcellation_scheme = ${parc}/" $config | sed "s/insert_sub_here/${sub}/g" | sed "s/use_existing_freesurfer_data = .*/use_existing_freesurfer_data = ${existingFS}/" > ${sub}.ini
-	sed -i "s|insert_PWD_here|${PWD}|g" ${sub}.ini
-else
-	sed 's/seg_tool = Freesurfer/seg_tool = Custom segmentation/' $config | sed 's/parcellation_scheme = Lausanne2008/parcellation_scheme = Custom/' | sed "s/insert_sub_here/${sub}/g" | sed "s/CustomParcHere/${parc}/g" | sed 's/custom_parcellation = False/custom_parcellation = True/' > ${sub}.ini
-	sed -i "s|insert_PWD_here|${PWD}|g" ${sub}.ini
-	graphml=`cat ${sub}.ini | grep graphml_file | awk '{print $3}'`
-	numreg=`cat ${graphml} | grep "node id" | tail -1 | sed 's/.*="//' | sed 's/">//'`
-	echo "Using $parc custom Parcellation, with $numreg GM regions."
-	sed -i "s/number_of_regions = 0/number_of_regions = ${numreg}/g" ${sub}.ini
-	sed -i "s/'number_of_regions': 0/'number_of_regions': ${numreg}/g" ${sub}.ini
-fi
+function make_config {
+	sub=$1;	config=$2; parc=$3; existingFS=$4
+
+	#edit config file to use command arguments; check if using custom parcellation or not
+	if [[ $parc == NativeFreesurfer || $parc == Lausanne2008 ]]; then
+		sed "s/parcellation_scheme = .*/parcellation_scheme = ${parc}/" $config | sed "s/insert_sub_here/${sub}/g" | sed "s/use_existing_freesurfer_data = .*/use_existing_freesurfer_data = ${existingFS}/" > ${sub}.ini
+		sed -i "s|insert_PWD_here|${PWD}|g" ${sub}.ini
+	else
+		sed 's/seg_tool = Freesurfer/seg_tool = Custom segmentation/' $config | sed 's/parcellation_scheme = Lausanne2008/parcellation_scheme = Custom/' | sed "s/insert_sub_here/${sub}/g" | sed "s/CustomParcHere/${parc}/g" | sed 's/custom_parcellation = False/custom_parcellation = True/' > ${sub}.ini
+		sed -i "s|insert_PWD_here|${PWD}|g" ${sub}.ini
+		graphml=`cat ${sub}.ini | grep graphml_file | awk '{print $3}'`
+		numreg=`cat ${graphml} | grep "node id" | tail -1 | sed 's/.*="//' | sed 's/">//'`
+		echo "Using $parc custom Parcellation, with $numreg GM regions."
+		sed -i "s/number_of_regions = 0/number_of_regions = ${numreg}/g" ${sub}.ini
+		sed -i "s/'number_of_regions': 0/'number_of_regions': ${numreg}/g" ${sub}.ini
+	fi
+}
 
 #activate cmp beta v02 (David's edition; has mrtrix and gibbs)
 source /group_shares/PSYCH/code/release/pipelines/CMP_beta_v02/bin/activate
@@ -43,6 +47,7 @@ export SUBJECTS_DIR=/group_shares/PSYCH/code/release/pipelines/CMP_beta_v02/Free
 
 #run connectomemapper according to whether parc is custom or not
 if [[ $parc == NativeFreesurfer || $parc == Lausanne2008 ]];then
+	make_config $sub $config $parc $existingFS
 	connectomemapper $sub ${sub}.ini
 else
 	#check if CMP has been run yet
@@ -52,9 +57,11 @@ else
 		echo -e "\nCMP custom matrix creation requires that CMP is first run with Lausanne2008 or NativeFreesurfer...\n"
 		echo -e "\nRunning: `basename $0` $sub $config Lausanne2008 $existingFS 0 .\n"
 		echo -e "\n*************************\n"
+		make_config $sub $config $parc $existingFS
 		`basename $0` $sub $config Lausanne2008 $existingFS 0 .
 	fi
 	#now run the custom CMP scripts
+	make_config $sub $config $parc $existingFS
 	CMPdir=`which connectomemapper | sed 's/bin\/connectomemapper/cmp_nipype\/build\/lib/'`
 	make_cmp_customParc.bash $sub $parc
 	python2.7 ${basedir}/cmp_v2.1beta_getMatrix.py $sub $sub.ini $parc $CMPdir
@@ -68,7 +75,6 @@ fi
 #get most recent config file and results folder
 confname=`echo $config | sed 's/.*\///' | sed 's/\.ini//'`
 cfdir=`ls -d ${sub}/RESULTS/DTI/*/ | tail -1 | sed 's/\/$//'`
-#cfdir=`readlink -m ${cfdir}` #convert results folder to full path
 
 if [ -f ${cfdir}/${sub}.ini ];then
 	if [ -d ${cfidr} ];then
@@ -98,6 +104,8 @@ if [ -f ${cfdir}/${sub}.ini ];then
 		if [[ ${movefinaldir} != ${PWD} ]]; then mv -f ${sub} ${movefinaldir};fi
 		#jump to final directory
 		pushd ${movefinaldir}
+		#convert results folder to full path
+		cfdir=`readlink -m ${cfdir}`
 
 		### create symbolic links to the most recent diffusion connectome files
 		mkdir -p connectomes_${confname}/${sub}/connectivity_matrices
