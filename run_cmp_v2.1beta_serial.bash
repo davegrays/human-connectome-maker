@@ -79,13 +79,13 @@ if [ -f ${cfdir}/${sub}.ini ];then
 		fi
 
 		#move .tck and .trk files to scratch folder (only if mrtrix probabilistic tracking was run)
-		if [[ -f ${sub}/NIPYPE/diffusion_pipeline/diffusion_stage/tracking/mrtrix_probabilistic_tracking/mapflow/_mrtrix_probabilistic_tracking1/diffusion_resampled_CSD_tracked.tck && $movetrks -ne 0 ]];then
+		if [[ -f ${sub}/NIPYPE/diffusion_pipeline/diffusion_stage/tracking/mrtrix_probabilistic_tracking/mapflow/_mrtrix_probabilistic_tracking1/diffusion_resampled_CSD_tracked.tck && "$movetrks" != "0" ]];then
 			for file in ${sub}/NIPYPE/diffusion_pipeline/diffusion_stage/tracking/mrtrix_probabilistic_tracking/mapflow/_mrtrix_probabilistic_tracking*/diffusion_resampled_CSD_tracked.tck;do
 				mkdir -p `echo ${movetrks_dir}/${file} | sed 's/diffusion_resampled_CSD_tracked\.tck//'`
 				mv -f ${file} ${movetrks_dir}/${file}
 			done
 		fi
-		if [[ -f ${sub}/NIPYPE/diffusion_pipeline/diffusion_stage/tracking/trackvis/mapflow/_trackvis1/converted.trk && $movetrks -ne 0 ]];then
+		if [[ -f ${sub}/NIPYPE/diffusion_pipeline/diffusion_stage/tracking/trackvis/mapflow/_trackvis1/converted.trk && "$movetrks" != "0" ]];then
 			for file in ${sub}/NIPYPE/diffusion_pipeline/diffusion_stage/tracking/trackvis/mapflow/_trackvis*/converted.trk;do
 				mkdir -p `echo ${movetrks_dir}/${file} | sed 's/converted\.trk//'`
 				mv -f ${file} ${movetrks_dir}/${file}
