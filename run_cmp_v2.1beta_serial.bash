@@ -57,7 +57,6 @@ else
 		echo -e "\nCMP custom matrix creation requires that CMP is first run with Lausanne2008 or NativeFreesurfer...\n"
 		echo -e "\nRunning: `basename $0` $sub $config Lausanne2008 $existingFS 0 .\n"
 		echo -e "\n*************************\n"
-		make_config $sub $config $parc $existingFS
 		`basename $0` $sub $config Lausanne2008 $existingFS 0 .
 	fi
 	#now run the custom CMP scripts
