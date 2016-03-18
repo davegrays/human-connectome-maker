@@ -58,6 +58,7 @@ else
 		echo -e "\nRunning: `basename $0` $sub $config Lausanne2008 $existingFS 0 .\n"
 		echo -e "\n*************************\n"
 		`basename $0` $sub $config Lausanne2008 $existingFS 0 .
+		existingFS=True
 	fi
 	#now run the custom CMP scripts
 	make_config $sub $config $parc $existingFS
