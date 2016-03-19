@@ -61,9 +61,9 @@ else
 		existingFS=True
 	fi
 	#now run the custom CMP scripts
+	make_cmp_customParc.bash $sub $parc
 	make_config $sub $config $parc $existingFS
 	CMPdir=`which connectomemapper | sed 's/bin\/connectomemapper/cmp_nipype\/build\/lib/'`
-	make_cmp_customParc.bash $sub $parc
 	python2.7 ${basedir}/cmp_v2.1beta_getMatrix.py $sub $sub.ini $parc $CMPdir
 fi
 
