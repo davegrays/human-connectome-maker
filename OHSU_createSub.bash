@@ -110,7 +110,7 @@ if [[ -d $rawDTI ]]; then
 	fslmerge -t ${sub}_${DTIname}_MC B0_mean `printf "vol%04d.nii.gz " ${weis_keep[@]}`
 	#eddy correct
 	echo "eddy correcting..."
-	dave_eddy_correct ${sub}_${DTIname}_MC ${sub}_${DTIname}_MC_EC 0 spline
+	dave_eddy_correct ${sub}_${DTIname}_MC ${sub}_${DTIname}_MC_EC 0 sinc
 	mv ${sub}_${DTIname}_MC_EC.ecclog ../
 	echo "reformat original DWI and final EC images to short datatype"
 	fslmaths ${sub}_${DTIname}_MC_EC.nii.gz ../${sub}_${DTIname}_MC_EC.nii.gz -odt short
