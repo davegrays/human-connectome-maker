@@ -75,6 +75,7 @@ Usage() {
 
 [ "$3" = "" ] && Usage
 
+#the below section including an option for interpolation method is my addition - DG 2015
 interpm="trilinear"
 if [ $# -eq 4 ]; then
     interpm=${4}
