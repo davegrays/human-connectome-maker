@@ -18,7 +18,7 @@ DTIname=`echo ${rawDTI} | sed 's/.*\///'`
 
 #set T2 variable
 if [ $# -eq 4 ]; then
-	rawT2=`readlink -f $2`
+	rawT2=`readlink -f $4`
 	T2name=`echo ${rawT2} | sed 's/.*\///'`
 fi
 
