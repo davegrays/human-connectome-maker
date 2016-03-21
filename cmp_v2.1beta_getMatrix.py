@@ -56,7 +56,7 @@ class CustomMatSub(object):
         register.base_dir = self.sub_dir + '/FREESURFER/label'
         # define node 1: transform
         if self.nonlinear_reg:
-        	XFM = pe.Node(interface=fsl.ApplyWarp(in_file = self.atlas_nifti_file, premat = self.sub_dir + '/NIPYPE/diffusion_pipeline/registration_stage/linear_registration/T1-TO-TARGET.mat', field_file = self.sub_dir + '/NIPYPE/diffusion_pipeline/registration_stage/nonlinear_registration/T2-TO-target_warp.nii.gz', interp="nn", ref_file = self.sub_dir + '/NIPYPE/diffusion_pipeline/registration_stage/target_resample/target_first.nii.gz'), name='applywarp')
+        	XFM = pe.Node(interface=fsl.ApplyWarp(in_file = self.atlas_nifti_file, premat = self.sub_dir + '/NIPYPE/diffusion_pipeline/registration_stage/t1tot2_lin_registration/T1-TO-T2.mat', field_file = self.sub_dir + '/NIPYPE/diffusion_pipeline/registration_stage/t2totarget_nlin_registration/T2-TO-target_warp.nii.gz', interp="nn", ref_file = self.sub_dir + '/NIPYPE/diffusion_pipeline/registration_stage/target_resample/target_first.nii.gz'), name='applywarp')
         else:
                 XFM = pe.Node(interface=fsl.ApplyXfm(in_file = self.atlas_nifti_file, in_matrix_file = self.sub_dir + '/NIPYPE/diffusion_pipeline/registration_stage/linear_registration/T1-TO-TARGET.mat', apply_xfm=True, interp='nearestneighbour', reference = self.sub_dir + '/NIPYPE/diffusion_pipeline/registration_stage/target_resample/target_first.nii.gz'), name='applyxfm')
         #  define node 2: resample
