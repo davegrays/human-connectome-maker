@@ -198,33 +198,12 @@ END {
 
 mv tmp1 ../mrtrix_4XN.gradients; mv tmp2 ../dtk.bvecs; mv tmp3 ../dtk.bvals;
 
-	#### Begin B0 unwarping
-	#### Begin T1 to B0 registration dof 6
-	mri_convert -voxsize 1.000000 1.000000 1.000000 --input_volume B0_mean.nii.gz --output_volume target_first.nii.gz
-	flirt -in ../T1/${sub}_`echo ${T1name} | sed 's/\.mgz/\.nii.gz/'` -ref target_first.nii.gz -out T1_TO_TARGET.nii.gz -omat T1_TO_TARGET.mat -cost mutualinfo -dof 6 -nosearch -usesqform
-	#### bias correct some shiz
-	N4BiasFieldCorrection -d 3 -i T1_TO_TARGET.nii.gz -o T1_TO_TARGET_N4.nii.gz
-	N4BiasFieldCorrection -d 3 -i target_first.nii.gz -o target_first_N4.nii.gz	
-	#### mask T1 with previously acquired bet
-	bet T1_TO_TARGET_N4 T1_TO_TARGET_N4_brain -m -f 0.3
-	#### get warp parameters
-	/home/david/Projects/UNCstuff/ANTs-1.9.v4-Linux/bin/ANTS 3 -m  MI[T1_TO_TARGET_N4_brain.nii.gz,target_first_N4.nii.gz,1,32] -t SyN[0.1] -r Gauss[3,0.2] -o B0_N4_distortion -i 60x30x0 --number-of-affine-iterations 0 --Restrict-Deformation 0.5x1x0.5 --use-Histogram-Matching --subsampling-factors 4x2x1 --gaussian-smoothing-sigmas 2x1x0
-	#### apply warp and resample DWI to 2x2x2
-	mri_convert -voxsize 2.000000 2.000000 2.000000 --input_volume B0_mean.nii.gz --output_volume B0_resampled.nii.gz
-	antsApplyTransforms -d 3 -e 3 -i ${sub}_${DTIname}_MC_EC.nii.gz -t B0_N4_distortionWarp.nii.gz -r B0_resampled.nii.gz -o ${sub}_${DTIname}_MC_EC_unwarped_2mm.nii.gz -n BSpline
-	mv B0_N4_distortionAffine.txt B0_N4_distortionWarp.nii.gz ../
-	fslmaths ${sub}_${DTIname}_MC_EC_unwarped_2mm.nii.gz ../${sub}_${DTIname}_MC_EC_unwarped_2mm.nii.gz -odt short
-	#### End B0 unwarping
+rm *
+	#### B0 unwarping and resampling
+	pushd ..
+	redo_b0_to_T1.bash $sub
+	popd
 
-####TESTING ONLY
-#	antsIntermodalityIntrasubject_Dave.sh -d 3 -t 3 -i target_first.nii.gz -r T1_TO_TARGET_N4_brain.nii.gz -x T1_TO_TARGET_N4_brain_mask.nii.gz -w t12template -o antsScript_B0distortion2
-#	mri_convert -rt cubic -voxsize 2.000000 2.000000 2.000000 --input_volume antsScript_B0distortion2anatomical.nii.gz --output_volume antsScript_B0distortion2anatomical.nii.gz
-#exit
-#####END TESTING ONLY
-
-	#retain only final eddy corrected, unwarped, resampled output in DTI folder
-	rm *
-	mv ../${sub}_${DTIname}_MC_EC_unwarped_2mm.nii.gz .
 
 elif [[ -f $rawDTI ]]; then
 	echo "raw DTI is a file. creating symlink named AFQproc.nii.gz"
