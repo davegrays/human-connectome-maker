@@ -198,12 +198,8 @@ END {
 
 mv tmp1 ../mrtrix_4XN.gradients; mv tmp2 ../dtk.bvecs; mv tmp3 ../dtk.bvals;
 
+#cleanup
 rm *
-	#### B0 unwarping and resampling
-	pushd ..
-	redo_b0_to_T1.bash $sub
-	popd
-
 
 elif [[ -f $rawDTI ]]; then
 	echo "raw DTI is a file. creating symlink named AFQproc.nii.gz"
@@ -215,6 +211,9 @@ else
 	exit 1
 fi
 popd
+
+#### B0 unwarping and resampling
+redo_b0_to_T1.bash $sub
 
 ;&
 copy_freesurfer)
