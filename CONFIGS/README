@@ -1,0 +1,17 @@
+#you only need to make changes to settings in the diffusion_MasterTemplate.ini file.
+#to propagate changes to all .ini files, run master_to_inis.bash
+
+#default gibbs settings are 100000000 iterations
+#for testing, use 1000000
+#default gibbs settings are .0003 particle weight
+#i have set to .0006
+
+-------------------
+
+notes about gradient table formats:
+
+1) dtk did not require inverting (flipping) gradient axes. dtk uses 'dtk.bvecs' and 'dtk.bvals'
+2) mrtrix needs x-gradient inversion. mrtrix uses 'mrtrix_4XN.gradients'
+3) gibbs needs y-gradient inversion. uses 'fsl.bvecs' and 'fsl.bvals'
+
+-DG 2/25/2015
