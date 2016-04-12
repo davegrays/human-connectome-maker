@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 if [[ $# -ne 2 ]]; then
 	echo -e "\nUsage:	`basename $0` <subjectFolder> <parcellation> \n"
 	echo -e "	i.e. `basename $0` subject1 Gordon"
