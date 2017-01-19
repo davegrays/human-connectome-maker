@@ -12,6 +12,7 @@ pushd $sub/RAWDATA
 echo "reslicing and extracting WM"
 mri_convert ../FREESURFER/mri/T1.mgz -rl T1/${sub}_*.nii.gz FST1_on_native.nii.gz
 mri_convert ../FREESURFER/mri/aseg.mgz -rl T1/${sub}_*.nii.gz aseg.nii.gz
+mri_convert ../FREESURFER/mri/brainmask.mgz -rl T1/${sub}_*.nii.gz FST1_on_native_brain.nii.gz
 fslmaths aseg -thr 41 -uthr 41 WM
 for WMnum in 2 251 252 253 254 255; do fslmaths aseg -thr $WMnum -uthr $WMnum -add WM WM; done
 fslmaths WM -bin WM
@@ -21,7 +22,6 @@ echo "extract, bias correct, and skullstrip b0"
 fslroi ${sub}_*_MC_EC.nii.gz b0 0 1
 N4BiasFieldCorrection -d 3 -i b0.nii.gz -o b0_N4.nii.gz	
 bet b0_N4 b0_N4_brain -f 0.4 -m
-bet FST1_on_native FST1_on_native_brain
 
 #flirt bbr registration
 echo "bbr registration, b0-->T1"

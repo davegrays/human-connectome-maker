@@ -212,12 +212,16 @@ else
 fi
 popd
 
-#### B0 unwarping and resampling
-redo_b0_to_T1.bash $sub
-
 ;&
 copy_freesurfer)
 cp -r ${FSdir} ${sub}/FREESURFER
+
+;&
+b0_unwarping)
+#### B0 unwarping and resampling
+redo_b0_to_T1.bash $sub
+
+#check existence of critical inputs for CMP lausanne
 ls ${sub}/FREESURFER/mri/aseg.mgz
 ls ${sub}/FREESURFER/label/lh.aparc.annot
 ls ${sub}/FREESURFER/label/rh.aparc.annot
