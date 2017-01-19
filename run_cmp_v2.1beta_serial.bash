@@ -45,6 +45,10 @@ function make_config {
 source /group_shares/PSYCH/code/release/pipelines/CMP_beta_v02/bin/activate
 export SUBJECTS_DIR=/group_shares/PSYCH/code/release/pipelines/CMP_beta_v02/Freesurfer_temp
 
+#disable FSL's automatic parallelization
+unset FSLPARALLEL
+unset SGE_ROOT
+
 #run connectomemapper according to whether parc is custom or not
 if [[ $parc == NativeFreesurfer || $parc == Lausanne2008 ]];then
 	make_config $sub $config $parc $existingFS

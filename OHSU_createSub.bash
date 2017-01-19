@@ -1,29 +1,34 @@
 #!/bin/bash -e
 
-if [[ $# -ne 3 && $# -ne 4 ]]; then
-	echo -e "\nUsage:	`basename $0` <subjectFolder> [</abspath/to/T1_file.nii> OR </abspath/to/T1_DICOMdir>] [</abspath/to/DTI_AFQproc.nii.gz> OR </abspath/to/DTI_DICOMdir>] [optional [</abspath/to/T2_file.nii> OR </abspath/to/T2_DICOMdir>]]"
-	echo -e "\ni.e	`basename $0` 101939-200_1 /home/david/W/data/APP/Projects/FREESURFER_SUBJECTS/chg_files/101939-200_2_fs_rowflipped.nii /home/david/W/data/APP/Images/DTI/Done/101939-200_1/raw/*_aligned_trilin.nii.gz"
+if [[ $# -ne 5 ]]; then
+	echo -e "\nUsage:	`basename $0` <subjectFolder> [</abspath/to/T1_file.nii> OR </abspath/to/T1_DICOMdir>] [</abspath/to/DTI_AFQproc.nii.gz> OR </abspath/to/DTI_DICOMdir>] [</abspath/to/T2_file.nii> OR </abspath/to/T2_DICOMdir>] <motion in DWI (1 or 0)>"
+	echo -e "\ni.e	`basename $0` 101939-200_1 /home/david/W/data/APP/Projects/FREESURFER_SUBJECTS/chg_files/101939-200_2_fs_rowflipped.nii /home/david/W/data/APP/Images/DTI/Done/101939-200_1/raw/*_aligned_trilin.nii.gz /path/to/T2/T2.nii.gz 0"
 	echo -e "OR"
-	echo -e "	`basename $0` 101939-200_1 /home/david/W/data/APP/Images/DICOMs/101939-200_1/3t_2010-08-18_20-26/MPRAGE_folder /home/david/W/data/APP/Images/DICOMs/101939-200_1/3t_2010-08-18_20-26/DTI_folder /home/david/W/data/APP/Images/DICOMs/101939-200_1/3t_2010-08-18_20-26/T2_folder "
+	echo -e "	`basename $0` 101939-200_1 /home/david/W/data/APP/Images/DICOMs/101939-200_1/3t_2010-08-18_20-26/MPRAGE_folder /home/david/W/data/APP/Images/DICOMs/101939-200_1/3t_2010-08-18_20-26/DTI_folder /home/david/W/data/APP/Images/DICOMs/101939-200_1/3t_2010-08-18_20-26/T2_folder 0"
 	echo -e "etc. etc."
 	exit 1
 fi
 
-#set T1 and DTI variables
+#set T1, DTI, and T2 variables
 sub=$1
 rawT1=`readlink -f $2`
 T1name=`echo ${rawT1} | sed 's/.*\///'`
 rawDTI=`readlink -f $3`
 DTIname=`echo ${rawDTI} | sed 's/.*\///'`
+rawT2=`readlink -f $4`
+T2name=`echo ${rawT2} | sed 's/.*\///'`
 
-#set T2 variable
-if [ $# -eq 4 ]; then
-	rawT2=`readlink -f $4`
-	T2name=`echo ${rawT2} | sed 's/.*\///'`
+#check if motion was indicated or not
+if [ $5 -eq 1 ]; then
+	echo -e "\nType which DWI frames to remove, separated by spaces. If none, leave blank. Then press [ENTER]:\n(note: starting index is 1, not 0)"
+	read userframes
+elif [ $5 -eq 0 ]; then
+	echo -e "No DWI frames to remove, because we're assuming there's no motion."
+	userframes=""
+else
+	echo -e "FATAL ERROR: Motion argument was set to $5. It must be set to 0 or 1."
+	exit 1
 fi
-
-echo -e "\nType which DWI frames to remove, separated by spaces. If none, leave blank. Then press [ENTER]:\n(note: starting index is 1, not 0)"
-read userframes
 
 #make arrays with 0-starting (remframes) and 1-starting indices (remframes_bvecs)
 declare -a remframes=(`echo $userframes`)

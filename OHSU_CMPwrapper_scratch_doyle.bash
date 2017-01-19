@@ -19,11 +19,18 @@ motion=$4
 topdir=$5
 
 #define top-level directories
-initdir=`readlink -m /group_shares/FAIR_HCP/HCP/processed/${group}/${sub}`
-FSdir=`readlink -m ${initdir}/${scandate}-SIEMENS*Study/HCP*FNL*/T1w/${sub}`
-Rawdir=`readlink -m /group_shares/FAIR_HCP/HCP/sorted/${group}/${sub}/${scandate}-SIEMENS_TrioTim-Nagel_K_Study/`
-analysesdir=`readlink -m ${initdir}/${scandate}-SIEMENS*Study/HCP*FNL*/analyses_v2`
-T1andT2dir=`readlink -m ${initdir}/${scandate}-SIEMENS*Study/HCP*FNL*/T1w`
+initdir=`readlink -m /scratch/doyle_temp/${group}/${sub}`
+FSdir=`readlink -m ${initdir}/T1w/${sub}`
+if [ "$group" == "ADHD-HumanYouth-OHSU" ]; then
+	Rawdir=`readlink -m /group_shares/FAIR_HCP/HCP/sorted/${group}/${sub}/${scandate}-SIEMENS_TrioTim-Nagel_K_Study/`
+	analysesdir=`readlink -m /group_shares/FAIR_HCP/HCP/processed/${group}/${sub}/${scandate}-SIEMENS*Study/HCP*FNL*/analyses_v2`
+elif [ "$group" == "ASD-HumanYouth-OHSU" ]; then
+	Rawdir=`readlink -m /group_shares/FAIR_ASD/CYA/sorted/${group}/${sub}/${scandate}-SIEMENS_TrioTim-Nagel_K_Study/`
+	analysesdir="/group_shares/FAIR_HCP/HCP/processed/${group}/${sub}/${scandate}-SIEMENS_TrioTim-Nagel_K_Study/HCP_release_${scandate}/${sub}/analyses_v2"
+else
+	echo "ERROR: invalid <HCP_group> argument given: ${group}. Must be either ADHD-HumanYouth-OHSU or ASD-HumanYouth-OHSU."
+fi
+T1andT2dir=`readlink -m ${initdir}/T1w`
 
 ######## IMPORTANT ISSUE #########
 #FSdir, analysesdir, and T1andT2dir will need to vary per subject/scandate depending on what Eric Earl recommends 
